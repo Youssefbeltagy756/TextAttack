@@ -31,7 +31,7 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
         pop_size=60,
         max_iters=20,
         temp=0.3,
-        give_up_if_no_improvement=False,
+        give_up_if_no_improvement=True,
         post_crossover_check=True,
         max_crossover_retries=20,
     ):
