@@ -249,6 +249,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             if population[0].result.score > current_score:
                 current_score = population[0].result.score
+                print(dir(population[0]))
             elif self.give_up_if_no_improvement:
                 break
 
@@ -270,7 +271,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     break
 
                 child = self._perturb(child, initial_result)
-                print(child)
+                print(dir(child))
                 if child.result.score > current_score:
                     print("score is high")
                 else:
