@@ -272,7 +272,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 child = self._perturb(child, initial_result)
                 print(child)
                 if population[0].result.score > current_score:
-                    print("score is high)
+                    print("score is high")
                 else:
                     print("Score is still low")        
                 children.append(child)
