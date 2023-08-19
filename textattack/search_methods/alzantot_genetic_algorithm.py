@@ -142,7 +142,6 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
             print(pop_member.attacked_text)
             pop_member = self._perturb(pop_member, initial_result)
             print(pop_member.attacked_text)
-            print(pop_member)
             population.append(pop_member)
 
         return population
