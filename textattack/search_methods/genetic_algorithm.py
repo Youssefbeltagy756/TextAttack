@@ -94,6 +94,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             #    original_text=original_result.attacked_text,
             #    indices_to_modify=[idx],
             #)
+            import itertools
+            import re
+            import torch
+            from transformers import AutoModelForMaskedLM, AutoTokenizer
+            from textattack.shared import utils
+            from textattack.transformations.word_swaps import WordSwap
             transformation_inatance = WordSwapMaskedLM2(
                     method="bae",
                     masked_language_model='UBC-NLP/MARBERT',
