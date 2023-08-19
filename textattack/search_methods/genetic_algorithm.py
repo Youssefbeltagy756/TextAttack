@@ -232,6 +232,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         raise NotImplementedError()
 
     def perform_search(self, initial_result):
+        print(initial_result.attacked_text)
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         pop_size = len(population)
@@ -250,7 +251,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             if population[0].result.score > current_score:
                 current_score = population[0].result.score
                 print("The print in the beginning")
-                print(dir(population[0]))
+                print(population[0].attacked_text)
             elif self.give_up_if_no_improvement:
                 print("ThIS IS THE ELIF")
                 break
