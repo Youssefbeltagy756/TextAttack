@@ -80,6 +80,21 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         if non_zero_indices == 0:
             return pop_member
         iterations = 0
+        import itertools
+        import re
+        import torch
+        from transformers import AutoModelForMaskedLM, AutoTokenizer
+        from textattack.shared import utils
+        from textattack.transformations.word_swaps import WordSwap
+        transformation_inatance = WordSwapMaskedLM2(
+                    method="bae",
+                    masked_language_model='UBC-NLP/MARBERT',
+                    max_candidates=8,
+                    min_confidence=5e-4,
+                    batch_size=16,
+                    max_length=128
+                    )    
+        from textattack.shared import AttackedText
         while iterations < non_zero_indices:
             if index:
                 idx = index
@@ -94,21 +109,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             #    original_text=original_result.attacked_text,
             #    indices_to_modify=[idx],
             #)
-            import itertools
-            import re
-            import torch
-            from transformers import AutoModelForMaskedLM, AutoTokenizer
-            from textattack.shared import utils
-            from textattack.transformations.word_swaps import WordSwap
-            transformation_inatance = WordSwapMaskedLM2(
-                    method="bae",
-                    masked_language_model='UBC-NLP/MARBERT',
-                    max_candidates=8,
-                    min_confidence=5e-4,
-                    batch_size=16,
-                    max_length=128
-                    )    
-            from textattack.shared import AttackedText
             transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
