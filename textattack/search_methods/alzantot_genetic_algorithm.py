@@ -122,9 +122,9 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
             )
             num_candidate_transformations[diff_idx] += 1
 
-        # Just b/c there are no replacements now doesn't mean we never want to select the word for perturbation
-        # Therefore, we give small non-zero probability for words with no replacements
-        # Epsilon is some small number to approximately assign small probability
+    # Just because there are no replacements now doesn't mean we never want to select the word for perturbation
+    # Therefore, we give a small non-zero probability for words with no replacements
+    # Epsilon is some small number to approximately assign small probability
         min_num_candidates = np.amin(num_candidate_transformations)
         epsilon = max(1, int(min_num_candidates * 0.1))
         for i in range(len(num_candidate_transformations)):
@@ -146,7 +146,7 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
                 },
             )
 
-            # Check if perturbing the member violates the RepeatModification constraint
+            # Perturb the member until it satisfies the RepeatModification constraint
             while not repeat_mod_constraint(initial_result.attacked_text, pop_member.attacked_text):
                 print("member before perturbation")
                 print(pop_member.attacked_text)
