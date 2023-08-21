@@ -72,7 +72,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         probability of each word being selected for perturbation."""
         raise NotImplementedError
 
-def _perturb(self, pop_member, original_result, index=None):
+    def _perturb(self, pop_member, original_result, index=None):
         """Perturb `pop_member` and return it. Replaces a word at a random
         (unless `index` is specified) in `pop_member`.
 
@@ -83,6 +83,7 @@ def _perturb(self, pop_member, original_result, index=None):
         Returns:
             Perturbed `PopulationMember`
         """
+        repeat_mod_constraint = RepeatModification()
         num_words = pop_member.attacked_text.num_words
         # `word_select_prob_weights` is a list of values used for sampling one word to transform
         word_select_prob_weights = np.copy(
@@ -113,8 +114,7 @@ def _perturb(self, pop_member, original_result, index=None):
             print([idx])
 
 
-            num_words = pop_member.attacked_text.num_words
-            repeat_mod_constraint = RepeatModification()  # Instantiate the RepeatModification constraint
+            num_words = pop_member.attacked_text.num_words  # Instantiate the RepeatModification constraint
     
             # Get the modifiable indices based on the RepeatModification constraint
             modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
