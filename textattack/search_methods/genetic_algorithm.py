@@ -70,22 +70,32 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _perturb(self, pop_member, original_result, index=None):
         """Perturb `pop_member` and return it. Replaces a word at a random
         (unless `index` is specified) in `pop_member`.
-
+    
         Args:
             pop_member (PopulationMember): The population member being perturbed.
-            original_result (GoalFunctionResult): Result of original sample being attacked
-            index (int): Index of word to perturb.
+            original_result (GoalFunctionResult): Result of the original sample being attacked.
+            index (int): Index of the word to perturb.
         Returns:
-            Perturbed `PopulationMember`
+            Perturbed `PopulationMember`.
         """
         num_words = pop_member.attacked_text.num_words
-        # `word_select_prob_weights` is a list of values used for sampling one word to transform
-        word_select_prob_weights = np.copy(
-            self._get_word_select_prob_weights(pop_member)
-        )
+        repeat_mod_constraint = RepeatModification()  # Instantiate the RepeatModification constraint
+    
+        # Get the modifiable indices based on the RepeatModification constraint
+        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
+    
+        # If the specified index is not modifiable, return the original population member
+        if index is not None and index not in modifiable_indices:
+            return pop_member
+    
+        # Filter out non-modifiable indices from word_select_prob_weights
+        word_select_prob_weights = np.copy(self._get_word_select_prob_weights(pop_member))
+        word_select_prob_weights[np.logical_not(np.isin(range(num_words), modifiable_indices))] = 0
+    
         non_zero_indices = np.count_nonzero(word_select_prob_weights)
         if non_zero_indices == 0:
             return pop_member
+    
         iterations = 0
         import itertools
         import re
@@ -94,34 +104,30 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         from textattack.shared import utils
         from textattack.transformations.word_swaps import WordSwap
         from textattack.shared import AttackedText
+    
         while iterations < non_zero_indices:
             if index:
                 idx = index
             else:
-                w_select_probs = word_select_prob_weights / np.sum(
-                    word_select_prob_weights
-                )
+                w_select_probs = word_select_prob_weights / np.sum(word_select_prob_weights)
                 idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
-
-            print("indeces to the transformation")
+    
+            print("Indices to the transformation:")
             print(idx)
-            print([idx])
+    
             transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
                 indices_to_modify=[idx],
             )
-            #transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
-
+    
             if not len(transformed_texts):
                 iterations += 1
                 continue
-
+    
             new_results, self._search_over = self.get_goal_results(transformed_texts)
-
-            diff_scores = (
-                torch.Tensor([r.score for r in new_results]) - pop_member.result.score
-            )
+    
+            diff_scores = torch.Tensor([r.score for r in new_results]) - pop_member.result.score
             if len(diff_scores) and diff_scores.max() > 0:
                 idx_with_max_score = diff_scores.argmax()
                 pop_member = self._modify_population_member(
@@ -131,13 +137,13 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     idx,
                 )
                 return pop_member
-
+    
             word_select_prob_weights[idx] = 0
             iterations += 1
-
+    
             if self._search_over:
                 break
-
+    
         return pop_member
 
     @abstractmethod
