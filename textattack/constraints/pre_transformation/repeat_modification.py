@@ -15,6 +15,8 @@ class RepeatModification(PreTransformationConstraint):
         """Returns the word indices in current_text which are able to be
         deleted."""
         try:
+            print("get_modified indeces constraint mn el2lb")
+            print(set(range(len(current_text.words)))current_text.attack_attrs["modified_indices"])
             return (
                 set(range(len(current_text.words)))
                 - current_text.attack_attrs["modified_indices"]
