@@ -101,6 +101,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         from textattack.transformations.word_swaps import WordSwap
         from textattack.shared import AttackedText
         modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
+        array_modifiable_indices = np.array(modifiable_indices)
         while iterations < non_zero_indices:
             if index:
                 idx = index
@@ -119,7 +120,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     
             # Get the modifiable indices based on the RepeatModification constraint
 
-            array_modifiable_indices = np.array(modifiable_indices)
+
             
             if idx is not None and idx in array_modifiable_indices:
                 transformed_texts = self.get_transformations(
