@@ -32,6 +32,7 @@ class PreTransformationConstraint(ReprMixin, ABC):
                 print(word)
             return set(range(len(current_text.words)))
         print("check_compatibility success")
+        print(self._get_modifiable_indices(current_text))
         print([current_text.words[i] for i in self._get_modifiable_indices(current_text)])
         return self._get_modifiable_indices(current_text)
     
