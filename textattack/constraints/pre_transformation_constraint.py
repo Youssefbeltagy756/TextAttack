@@ -27,7 +27,12 @@ class PreTransformationConstraint(ReprMixin, ABC):
             transformation: The ``Transformation`` which will be applied.
         """
         if not self.check_compatibility(transformation):
+            print("not check_compatability")
+            for i in range(0,len(current_text.words)):
+                print(current_text.words[i])
             return set(range(len(current_text.words)))
+        print("check_compatability success")
+        print(self._get_modifiable_indices(current_text))
         return self._get_modifiable_indices(current_text)
 
     @abstractmethod
