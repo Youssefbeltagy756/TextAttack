@@ -407,6 +407,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             #    original_text=original_result.attacked_text,
             #    indices_to_modify=[idx],
             #)
+            modifiable_indices = self.constraint._get_modifiable_indices(pop_member.attacked_text)
+            print("Modifiable Indices:", modifiable_indices)
             transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
