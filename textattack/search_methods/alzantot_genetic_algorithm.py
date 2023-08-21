@@ -96,6 +96,8 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
             {"num_candidate_transformations": num_candidate_transformations},
         )
 
+
+
     def _initialize_population(self, initial_result, pop_size):
         """
         Initialize a population of size `pop_size` with `initial_result`
@@ -127,6 +129,8 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
             )
 
         population = []
+        repeat_mod_constraint = RepeatModification()  # Instantiate the RepeatModification constraint
+
         for _ in range(pop_size):
             pop_member = PopulationMember(
                 initial_result.attacked_text,
@@ -137,12 +141,16 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
                     )
                 },
             )
-            # Perturb `pop_member` in-place
-            print("member before perturbation")
-            print(pop_member.attacked_text)
-            pop_member = self._perturb(pop_member, initial_result)
-            print("member after perturbation")
-            print(pop_member.attacked_text)
+
+            # Check if perturbing the member violates the RepeatModification constraint
+            while not repeat_mod_constraint(initial_result.attacked_text, pop_member.attacked_text):
+                print("member before perturbation")
+                print(pop_member.attacked_text)
+                pop_member = self._perturb(pop_member, initial_result)
+                print("member after perturbation")
+                print(pop_member.attacked_text)
+                population.append(pop_member)
+
             population.append(pop_member)
 
         return population
