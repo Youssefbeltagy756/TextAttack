@@ -9,6 +9,10 @@ by Alzantot et. al `<arxiv.org/abs/1804.07998>`_  from `<github.com/nesl/nlp_adv
 import numpy as np
 
 from textattack.search_methods import GeneticAlgorithm, PopulationMember
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
 
 
 class AlzantotGeneticAlgorithm(GeneticAlgorithm):
