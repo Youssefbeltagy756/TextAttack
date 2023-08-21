@@ -16,7 +16,7 @@ class RepeatModification(PreTransformationConstraint):
         deleted."""
         try:
             print("get_modified indeces constraint mn el2lb")
-            print(set(range(len(current_text.words))), current_text.attack_attrs["modified_indices"])
+            print([current_text.words[i] for i in range(len(current_text.words)) if i not in current_text.attack_attrs["modified_indices"]])
             return (
                 set(range(len(current_text.words)))
                 - current_text.attack_attrs["modified_indices"]
