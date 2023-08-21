@@ -11,6 +11,11 @@ from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import PopulationBasedSearch, PopulationMember
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
+
 import itertools
 import re
 import torch
