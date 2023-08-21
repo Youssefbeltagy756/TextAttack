@@ -17,23 +17,23 @@ class PreTransformationConstraint(ReprMixin, ABC):
     modified.
     """
 
-    def __call__(self, current_text, transformation):
-        """Returns the word indices in ``current_text`` which are able to be
-        modified. First checks compatibility with ``transformation`` then calls
-        ``_get_modifiable_indices``
+def __call__(self, current_text, transformation):
+    """Returns the word indices in ``current_text`` which are able to be
+    modified. First checks compatibility with ``transformation`` then calls
+    ``_get_modifiable_indices``
 
-        Args:
-            current_text: The ``AttackedText`` input to consider.
-            transformation: The ``Transformation`` which will be applied.
-        """
-        if not self.check_compatibility(transformation):
-            print("not check_compatability")
-            for i in range(0,len(current_text.words)):
-                print(current_text.words[i])
-            return set(range(len(current_text.words)))
-        print("check_compatability success")
-        print(self._get_modifiable_indices(current_text))
-        return self._get_modifiable_indices(current_text)
+    Args:
+        current_text: The ``AttackedText`` input to consider.
+        transformation: The ``Transformation`` which will be applied.
+    """
+    if not self.check_compatibility(transformation):
+        print("not check_compatibility")
+        for word in current_text.words:
+            print(word)
+        return set(range(len(current_text.words)))
+    print("check_compatibility success")
+    print([current_text.words[i] for i in self._get_modifiable_indices(current_text)])
+    return self._get_modifiable_indices(current_text)
 
     @abstractmethod
     def _get_modifiable_indices(current_text):
