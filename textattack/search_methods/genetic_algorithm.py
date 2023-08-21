@@ -409,6 +409,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             #)
             print("indeces to the transformation")
             print(idx)
+            print([idx])
             transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
