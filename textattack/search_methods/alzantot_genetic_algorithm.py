@@ -103,58 +103,53 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
 
 
     def _initialize_population(self, initial_result, pop_size):
-        """
-        Initialize a population of size `pop_size` with `initial_result`
-        Args:
-            initial_result (GoalFunctionResult): Original text
-            pop_size (int): size of population
-        Returns:
-            population as `list[PopulationMember]`
-        """
-        words = initial_result.attacked_text.words
-        num_candidate_transformations = np.zeros(len(words))
-        transformed_texts = self.get_transformations(
-            initial_result.attacked_text, original_text=initial_result.attacked_text
-        )
-        for transformed_text in transformed_texts:
-            diff_idx = next(
-                iter(transformed_text.attack_attrs["newly_modified_indices"])
+            """
+            Initialize a population of size `pop_size` with `initial_result`
+            Args:
+                initial_result (GoalFunctionResult): Original text
+                pop_size (int): size of population
+            Returns:
+                population as `list[PopulationMember]`
+            """
+            words = initial_result.attacked_text.words
+            num_candidate_transformations = np.zeros(len(words))
+            transformed_texts = self.get_transformations(
+                initial_result.attacked_text, original_text=initial_result.attacked_text
             )
-            num_candidate_transformations[diff_idx] += 1
-
-    # Just because there are no replacements now doesn't mean we never want to select the word for perturbation
-    # Therefore, we give a small non-zero probability for words with no replacements
-    # Epsilon is some small number to approximately assign small probability
-        min_num_candidates = np.amin(num_candidate_transformations)
-        epsilon = max(1, int(min_num_candidates * 0.1))
-        for i in range(len(num_candidate_transformations)):
-            num_candidate_transformations[i] = max(
-                num_candidate_transformations[i], epsilon
-            )
-
-        population = []
-        repeat_mod_constraint = RepeatModification()  # Instantiate the RepeatModification constraint
-
-        for _ in range(pop_size):
-            pop_member = PopulationMember(
-                initial_result.attacked_text,
-                initial_result,
-                attributes={
-                    "num_candidate_transformations": np.copy(
-                        num_candidate_transformations
-                    )
-                },
-            )
-
-            # Perturb the member until it satisfies the RepeatModification constraint
-            while not repeat_mod_constraint(initial_result.attacked_text, pop_member.attacked_text):
+            for transformed_text in transformed_texts:
+                diff_idx = next(
+                    iter(transformed_text.attack_attrs["newly_modified_indices"])
+                )
+                num_candidate_transformations[diff_idx] += 1
+    
+            # Just b/c there are no replacements now doesn't mean we never want to select the word for perturbation
+            # Therefore, we give small non-zero probability for words with no replacements
+            # Epsilon is some small number to approximately assign small probability
+            min_num_candidates = np.amin(num_candidate_transformations)
+            epsilon = max(1, int(min_num_candidates * 0.1))
+            for i in range(len(num_candidate_transformations)):
+                num_candidate_transformations[i] = max(
+                    num_candidate_transformations[i], epsilon
+                )
+    
+            population = []
+            for _ in range(pop_size):
+                pop_member = PopulationMember(
+                    initial_result.attacked_text,
+                    initial_result,
+                    attributes={
+                        "num_candidate_transformations": np.copy(
+                            num_candidate_transformations
+                        )
+                    },
+                )
+                # Perturb `pop_member` in-place
                 print("member before perturbation")
                 print(pop_member.attacked_text)
                 pop_member = self._perturb(pop_member, initial_result)
                 print("member after perturbation")
                 print(pop_member.attacked_text)
                 population.append(pop_member)
+    
+            return population
 
-            population.append(pop_member)
-
-        return population
