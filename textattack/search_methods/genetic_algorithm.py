@@ -252,7 +252,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             )
 
     @abstractmethod
-    def _initialize_population(self, initial_result, pop_size, modifiable_indices):
+    def _initialize_population(self, initial_result, pop_size, modifiable_indeces):
         """
         Initialize a population of size `pop_size` with `initial_result`
         Args:
@@ -263,11 +263,11 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         """
         raise NotImplementedError()
 
-    def perform_search(self, initial_result, modifiable_indices):
+    def perform_search(self, initial_result, modifiable_indeces):
         
         print(initial_result.attacked_text)
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, modifiable_indices)
+        population = self._initialize_population(initial_result, self.pop_size, modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
