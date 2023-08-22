@@ -7,7 +7,10 @@ Search Method Abstract Class
 from abc import ABC, abstractmethod
 
 from textattack.shared.utils import ReprMixin
-
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
 
 class SearchMethod(ReprMixin, ABC):
     """This is an abstract class that contains main helper functionality for
