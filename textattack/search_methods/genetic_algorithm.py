@@ -315,7 +315,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 if self._search_over:
                     break
 
-                child = self._perturb(child, initial_result)
+                child, modifiable = self._perturb(child, initial_result)
                 print(child.attacked_text)
                 if child.result.score > current_score:
                     print("score is high")
