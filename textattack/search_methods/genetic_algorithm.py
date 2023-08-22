@@ -120,7 +120,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                         original_text=original_result.attacked_text,
                         indices_to_modify=[idx],
                     )
-                    for i in rangr(0,len(array_modifiable_indices)):
+                    for i in range(0,len(array_modifiable_indices)):
                         if array_modifiable_indices[i] == idx:
                             array_modifiable_indices.pop(i)
                             flag = 1
