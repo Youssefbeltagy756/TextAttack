@@ -255,10 +255,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         raise NotImplementedError()
 
     def perform_search(self, initial_result):
-        num_words = initial_result.attacked_text.num_words
-        repeat_mod_constraint = RepeatModification()  
-        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(initial_result.attacked_text)
-        array_modifiable_indices = list(modifiable_indices)
         
         print(initial_result.attacked_text)
         self._search_over = False
@@ -301,26 +297,19 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 if self._search_over:
                     break
 
+                child = self._perturb(child, initial_result)
+                print(child.attacked_text)
+                if child.result.score > current_score:
+                    print("score is high")
+                    return child.result
+                else:
+                    print("Score is still low")        
+                children.append(child)
 
-                if idx in array_modifiable_indices:
-                    print("idx in array_modifiable")
-                    print(array_modifiable_indices)
-                    for i in range(0,pop_size-1):
-                        if array_modifiable_indices[i] == idx:
-                            array_modifiable_indices.pop(i)
-                    child = self._perturb(child, initial_result)
-                    print(child.attacked_text)
-                    if child.result.score > current_score:
-                        print("score is high")
-                        return child.result
-                    else:
-                        print("Score is still low")        
-                    children.append(child)
-
-                    # We need two `search_over` checks b/c value might change both in
-                    # `crossover` method and `perturb` method.
-                    if self._search_over:
-                        break
+                # We need two `search_over` checks b/c value might change both in
+                # `crossover` method and `perturb` method.
+                if self._search_over:
+                    break
 
             population = [population[0]] + children
 
