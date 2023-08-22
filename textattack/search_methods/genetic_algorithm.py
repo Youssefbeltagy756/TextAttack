@@ -123,7 +123,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             print(array_modifiable_indices)
             if idx is not None and idx in array_modifiable_indices:
-                priint("I make transformation")
+                print("I make transformation")
                 transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
