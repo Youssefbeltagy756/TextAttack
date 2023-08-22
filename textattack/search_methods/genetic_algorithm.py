@@ -252,7 +252,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             )
 
     @abstractmethod
-    def _initialize_population(self, initial_result, pop_size):
+    def _initialize_population(self, initial_result, pop_size, modifiable_indices):
         """
         Initialize a population of size `pop_size` with `initial_result`
         Args:
