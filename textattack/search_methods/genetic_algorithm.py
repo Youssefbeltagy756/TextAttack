@@ -122,8 +122,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     )
                     for i in range(0,len(array_modifiable_indices)):
                         if array_modifiable_indices[i] == idx:
-                            array_modifiable_indices.pop(i)
+                            index_1 = i
                             flag = 1
+                    array_modifiable_indices.pop(index_1)
                 else:
                     return pop_member,array_modifiable_indices
             else:
