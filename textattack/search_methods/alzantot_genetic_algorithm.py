@@ -102,7 +102,7 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
 
 
 
-    def _initialize_population(self, initial_result, pop_size):
+    def _initialize_population(self, initial_result, pop_size, modifiable_indeces):
             """
             Initialize a population of size `pop_size` with `initial_result`
             Args:
@@ -146,7 +146,8 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
                 # Perturb `pop_member` in-place
                 print("member before perturbation")
                 print(pop_member.attacked_text)
-                pop_member = self._perturb(pop_member, initial_result)
+                pop_member, modifable = self._perturb(pop_member, initial_result, modifiable_indices)
+                modifiable_indices = modifable
                 print("member after perturbation")
                 print(pop_member.attacked_text)
                 population.append(pop_member)
