@@ -33,7 +33,11 @@ class SearchMethod(ReprMixin, ABC):
                 "Search Method must have access to filter_transformations method"
             )
 
-        result = self.perform_search(initial_result)
+        num_words = initial_result.attacked_text.num_words
+        repeat_mod_constraint = RepeatModification()  
+        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(initial_result.attacked_text)
+        array_modifiable_indices = list(modifiable_indices)
+        result = self.perform_search(initial_result, modifiable_indices)
         # ensure that the number of queries for this GoalFunctionResult is up-to-date
         result.num_queries = self.goal_function.num_queries
         return result
