@@ -83,7 +83,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         Returns:
             Perturbed `PopulationMember`
         """
-        repeat_mod_constraint = RepeatModification()
         num_words = pop_member.attacked_text.num_words
         # `word_select_prob_weights` is a list of values used for sampling one word to transform
         word_select_prob_weights = np.copy(
@@ -100,8 +99,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         from textattack.shared import utils
         from textattack.transformations.word_swaps import WordSwap
         from textattack.shared import AttackedText
-        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
-        array_modifiable_indices = list(modifiable_indices)
         while iterations < non_zero_indices:
             if index:
                 idx = index
@@ -114,28 +111,11 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             print("indeces to the transformation")
             print(idx)
             print([idx])
-
-
-            num_words = pop_member.attacked_text.num_words  # Instantiate the RepeatModification constraint
-    
-            # Get the modifiable indices based on the RepeatModification constraint
-
-
-
-            if idx is not None and idx in array_modifiable_indices:
-                print("I make transformation")
-                print(array_modifiable_indices)
-                array_modifiable_indices.pop(idx-1)
-                print(array_modifiable_indices)
-                transformed_texts = self.get_transformations(
+            transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
                 indices_to_modify=[idx],
-                )
-            # If the specified index is not modifiable, return the original population member
-            else:
-                return pop_member
-
+            )
             #transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
