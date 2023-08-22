@@ -317,11 +317,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
                 child, modifiable = self._perturb(child, initial_result)
                 print(child.attacked_text)
-                if child.result.score > current_score:
-                    print("score is high")
-                    return child.result
-                else:
-                    print("Score is still low")        
                 children.append(child)
 
                 # We need two `search_over` checks b/c value might change both in
