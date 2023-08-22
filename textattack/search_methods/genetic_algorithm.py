@@ -102,6 +102,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         from textattack.shared import AttackedText
         modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
         array_modifiable_indices = np.array(modifiable_indices)
+        array_modifiable_indices = list(array_modifiable_indices)
         while iterations < non_zero_indices:
             if index:
                 idx = index
