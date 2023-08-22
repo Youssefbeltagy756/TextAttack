@@ -72,7 +72,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         probability of each word being selected for perturbation."""
         raise NotImplementedError
 
-    def _perturb(self, pop_member, original_result, array_modifiable_indices,index=None):
+    def _perturb(self, pop_member, original_result, array_modifiable_indices=None ,index=None):
         """Perturb `pop_member` and return it. Replaces a word at a random
         (unless `index` is specified) in `pop_member`.
 
@@ -112,18 +112,26 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             print("indeces to the transformation")
             print(idx)
             print([idx])
-            if idx in array_modifiable_indices:
-                transformed_texts = self.get_transformations(
-                    pop_member.attacked_text,
-                    original_text=original_result.attacked_text,
-                    indices_to_modify=[idx],
-                )
-                for i in rangr(0,len(array_modifiable_indices)):
-                    if array_modifiable_indices[i] == idx:
-                        array_modifiable_indices.pop(i)
-                        flag = 1
+            
+            if array_modifiable_indices is not None:
+                if idx in array_modifiable_indices:
+                    transformed_texts = self.get_transformations(
+                        pop_member.attacked_text,
+                        original_text=original_result.attacked_text,
+                        indices_to_modify=[idx],
+                    )
+                    for i in rangr(0,len(array_modifiable_indices)):
+                        if array_modifiable_indices[i] == idx:
+                            array_modifiable_indices.pop(i)
+                            flag = 1
+                else:
+                    return pop_member,array_modifiable_indices
             else:
-                return pop_member,array_modifiable_indices
+                transformed_texts = self.get_transformations(
+                        pop_member.attacked_text,
+                        original_text=original_result.attacked_text,
+                        indices_to_modify=[idx],
+                    )
             #transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
