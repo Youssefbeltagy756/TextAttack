@@ -124,12 +124,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             print(array_modifiable_indices)
             if idx is not None and idx in array_modifiable_indices:
                 print("I make transformation")
+                array_modifiable_indices.pop(idx-1)
                 transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
                 indices_to_modify=[idx],
                 )
-                array_modifiable_indices.pop(idx)
             # If the specified index is not modifiable, return the original population member
             else:
                 return pop_member
