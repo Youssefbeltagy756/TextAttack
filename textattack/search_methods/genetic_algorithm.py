@@ -72,7 +72,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         probability of each word being selected for perturbation."""
         raise NotImplementedError
 
-    def _perturb(self, pop_member, original_result, index=None):
+    def _perturb(self, pop_member, original_result, modifiable_indeces,index=None):
         """Perturb `pop_member` and return it. Replaces a word at a random
         (unless `index` is specified) in `pop_member`.
 
@@ -99,6 +99,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         from textattack.shared import utils
         from textattack.transformations.word_swaps import WordSwap
         from textattack.shared import AttackedText
+        flag = 0
         while iterations < non_zero_indices:
             if index:
                 idx = index
@@ -111,11 +112,18 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             print("indeces to the transformation")
             print(idx)
             print([idx])
-            transformed_texts = self.get_transformations(
-                pop_member.attacked_text,
-                original_text=original_result.attacked_text,
-                indices_to_modify=[idx],
-            )
+            if idx in modifiable_indeces:
+                transformed_texts = self.get_transformations(
+                    pop_member.attacked_text,
+                    original_text=original_result.attacked_text,
+                    indices_to_modify=[idx],
+                )
+                for i in rangr(0,len(modifiable_indeces)):
+                    if modifiable_indeces[i] == idx:
+                        modifiable_indeces.pop(i)
+                        flag = 1
+            else:
+                return pop_member,modifiable_indeces
             #transformed_texts = transformation_inatance._get_transformations(pop_member.attacked_text, [idx])
 
             if not len(transformed_texts):
@@ -135,15 +143,16 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     new_results[idx_with_max_score],
                     idx,
                 )
-                return pop_member
+                return pop_member, modifiable_indeces
 
             word_select_prob_weights[idx] = 0
             iterations += 1
 
             if self._search_over:
                 break
-
-        return pop_member
+        if flag == 1:
+            return pop_member, modifiable_indeces
+        return pop_member, modifiable_indeces
 
     @abstractmethod
     def _crossover_operation(self, pop_member1, pop_member2):
@@ -254,11 +263,11 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         """
         raise NotImplementedError()
 
-    def perform_search(self, initial_result):
+    def perform_search(self, initial_result, modifiable_indices):
         
         print(initial_result.attacked_text)
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size)
+        population = self._initialize_population(initial_result, self.pop_size, modifiable_indices)
         pop_size = len(population)
         current_score = initial_result.score
 
