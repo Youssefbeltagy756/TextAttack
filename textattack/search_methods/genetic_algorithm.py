@@ -121,8 +121,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             # Get the modifiable indices based on the RepeatModification constraint
 
 
-            
+            print(array_modifiable_indices)
             if idx is not None and idx in array_modifiable_indices:
+                priint("I make transformation")
                 transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
