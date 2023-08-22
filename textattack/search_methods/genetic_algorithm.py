@@ -255,9 +255,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         raise NotImplementedError()
 
     def perform_search(self, initial_result):
-        num_words = pop_member.attacked_text.num_words
+        num_words = initial_result.attacked_text.num_words
         repeat_mod_constraint = RepeatModification()  
-        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(pop_member.attacked_text)
+        modifiable_indices = repeat_mod_constraint._get_modifiable_indices(initial_result.attacked_text)
         array_modifiable_indices = list(modifiable_indices)
         
         print(initial_result.attacked_text)
