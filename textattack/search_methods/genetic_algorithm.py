@@ -327,7 +327,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     break
 
             population = [population[0]] + children
-        
+        population = sorted(population, key=lambda x: x.result.score, reverse=True)
         return population[0].result
 
     def check_transformation_compatibility(self, transformation):
