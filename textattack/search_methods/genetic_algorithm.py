@@ -126,7 +126,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                             flag = 1
                     array_modifiable_indices.pop(index_1)
                 else:
-                    return pop_member,array_modifiable_indices
+                    return pop_member
             else:
                 transformed_texts = self.get_transformations(
                         pop_member.attacked_text,
@@ -152,7 +152,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     new_results[idx_with_max_score],
                     idx,
                 )
-                return pop_member, array_modifiable_indices
+                return pop_member
 
             word_select_prob_weights[idx] = 0
             iterations += 1
@@ -160,8 +160,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             if self._search_over:
                 break
         if flag == 1:
-            return pop_member, array_modifiable_indices
-        return pop_member, array_modifiable_indices
+            return pop_member
+        return pop_member
 
     @abstractmethod
     def _crossover_operation(self, pop_member1, pop_member2):
@@ -316,7 +316,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 if self._search_over:
                     break
 
-                child, modifiable = self._perturb(child, initial_result)
+                child = self._perturb(child, initial_result)
                 print("This is the newly created child from crossing over")
                 print(child.attacked_text)
                 children.append(child)
