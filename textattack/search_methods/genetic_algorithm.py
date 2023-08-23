@@ -45,7 +45,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         pop_size=60,
         max_iters=20,
         temp=0.3,
-        give_up_if_no_improvement=True,
+        give_up_if_no_improvement=False,
         post_crossover_check=True,
         max_crossover_retries=20,
     ):
@@ -292,7 +292,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             if population[0].result.score > current_score:
                 current_score = population[0].result.score
-                print("The print in the beginning")
+                print("The print in the beginning and this is the highest score sentence")
                 print(population[0].attacked_text)
             elif self.give_up_if_no_improvement:
                 print("ThIS IS THE ELIF")
@@ -307,6 +307,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             children = []
             for idx in range(pop_size - 1):
+                print("We are crossing over now")
                 child = self._crossover(
                     population[parent1_idx[idx]],
                     population[parent2_idx[idx]],
@@ -316,6 +317,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     break
 
                 child, modifiable = self._perturb(child, initial_result)
+                print("This is the newly created child from crossing over")
                 print(child.attacked_text)
                 children.append(child)
 
@@ -325,7 +327,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     break
 
             population = [population[0]] + children
-
+        population = sorted(population, key=lambda x: x.result.score, reverse=True)
         return population[0].result
 
     def check_transformation_compatibility(self, transformation):
