@@ -308,7 +308,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     
             for pm in population:
                 perturbed_text = pm.result.attacked_text
-                perturbation = self._compute_perturbation(perturbed_text, initial_result.attacked_text)
+                perturbed_text_score = pm.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
     
                 if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
                     best_perturbation = perturbation
