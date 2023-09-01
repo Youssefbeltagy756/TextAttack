@@ -272,63 +272,62 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         """
         raise NotImplementedError()
 
-    def perform_search(self, initial_result, array_modifiable_indices):
-        
-        print(initial_result.attacked_text)
+    import numpy as np
+    
+    def _compute_perturbation(self, perturbed_text, input_text):
+        gradient = self._goal_function.gradient(perturbed_text)
+        perturbation = gradient / (self._calculate_norm(gradient) + 1e-10)
+        return perturbation
+    
+    def _calculate_norm(self, vector):
+        return np.linalg.norm(vector)
+
+    def perform_search(self, initial_result):
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indices)
+        population = self._initialize_population(initial_result, self.pop_size)
         pop_size = len(population)
         current_score = initial_result.score
-
+    
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
-
+    
             if (
                 self._search_over
                 or population[0].result.goal_status
                 == GoalFunctionResultStatus.SUCCEEDED
             ):
                 break
-
+    
             if population[0].result.score > current_score:
                 current_score = population[0].result.score
-                print("The print in the beginning and this is the highest score sentence")
-                print(population[0].attacked_text)
             elif self.give_up_if_no_improvement:
-                print("ThIS IS THE ELIF")
                 break
-
-            pop_scores = torch.Tensor([pm.result.score for pm in population])
-            logits = ((-pop_scores) / self.temp).exp()
-            select_probs = (logits / logits.sum()).cpu().numpy()
-
-            parent1_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
-            parent2_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
-
-            children = []
-            for idx in range(pop_size - 1):
-                print("We are crossing over now")
-                child = self._crossover(
-                    population[parent1_idx[idx]],
-                    population[parent2_idx[idx]],
-                    initial_result.attacked_text,
-                )
-                if self._search_over:
-                    break
-
-                child = self._perturb(child, initial_result)
-                print("This is the newly created child from crossing over")
-                print(child.attacked_text)
-                children.append(child)
-
-                # We need two `search_over` checks b/c value might change both in
-                # `crossover` method and `perturb` method.
-                if self._search_over:
-                    break
-
-            population = [population[0]] + children
+    
+            best_perturbation = None
+            best_perturbed_text = None
+    
+            for pm in population:
+                perturbed_text = pm.result.attacked_text
+                perturbation = self._compute_perturbation(perturbed_text, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+    
+            if self._search_over:
+                break
+    
+            perturbed_text = best_perturbed_text + self.step_size * best_perturbation
+            result = self._goal_function.predict(perturbed_text)
+    
+            if result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+                self._search_over = True
+    
+            population.append(PopulationMember(result))
+    
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
         return population[0].result
+    
 
     def check_transformation_compatibility(self, transformation):
         """The genetic algorithm is specifically designed for word
