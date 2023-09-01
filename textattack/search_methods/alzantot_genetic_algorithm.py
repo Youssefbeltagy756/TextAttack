@@ -144,11 +144,7 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
                     },
                 )
                 # Perturb `pop_member` in-place
-                print("member before perturbation")
-                print(pop_member.attacked_text)
                 pop_member = self._perturb(pop_member, initial_result)
-                print("member after perturbation")
-                print(pop_member.attacked_text)
                 population.append(pop_member)
     
             return population
