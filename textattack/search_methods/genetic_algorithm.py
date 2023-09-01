@@ -318,7 +318,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             if self._search_over:
                 break
     
-            perturbed_text = best_perturbed_text + self.step_size * best_perturbation
+            perturbed_text = best_perturbed_text + 0.01 * best_perturbation
             result = self._goal_function.predict(perturbed_text)
     
             if result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
