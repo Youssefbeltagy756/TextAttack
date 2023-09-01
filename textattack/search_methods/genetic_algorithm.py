@@ -387,7 +387,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             population.append(best_whole)
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return self.perform_search2(population[0])
+        return self.perform_search2(population[0].result)
     
 
     def check_transformation_compatibility(self, transformation):
