@@ -113,9 +113,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 )
                 idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
-            print("indeces to the transformation")
-            print(idx)
-            print([idx])
             
             if array_modifiable_indices is not None:
                 if idx in array_modifiable_indices:
