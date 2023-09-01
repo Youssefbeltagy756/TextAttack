@@ -274,8 +274,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     import numpy as np
     
-    def _compute_perturbation(self, perturbed_text, input_text):
-        gradient = perturbed_text.score
+    def _compute_perturbation(self, perturbed_text_score, input_text):
+        gradient = perturbed_text_score
         perturbation = gradient / (self._calculate_norm(gradient) + 1e-10)
         return perturbation
     
