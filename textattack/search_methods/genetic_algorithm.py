@@ -314,11 +314,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
                     best_perturbation = perturbation
                     best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
     
             if self._search_over:
                 break
     
-            perturbed_text = best_perturbed_text + 0.01 * best_perturbation
+            perturbed_text = best_perturbed_text_score + 0.01 * best_perturbation
             result = self._goal_function.predict(perturbed_text)
     
             if result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
