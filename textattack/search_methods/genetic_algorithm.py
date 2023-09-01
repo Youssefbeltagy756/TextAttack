@@ -23,6 +23,10 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from textattack.shared import utils
 from textattack.transformations.word_swaps import WordSwap
 
+import numpy as np
+
+
+
 
 class GeneticAlgorithm(PopulationBasedSearch, ABC):
     """Base class for attacking a model with word substiutitions using a
@@ -320,8 +324,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 break
     
             perturbed_text = best_perturbed_text_score + 0.01 * best_perturbation
+            print(perturbed_text)
             result = self._goal_function.predict(perturbed_text)
-    
+            
             if result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 self._search_over = True
     
