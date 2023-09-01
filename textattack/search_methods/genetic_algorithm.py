@@ -282,7 +282,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    def perform_search(self, initial_result):
+    def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         pop_size = len(population)
