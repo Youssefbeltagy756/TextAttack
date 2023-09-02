@@ -336,16 +336,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             population[parent2_idx[best_idx]],
             initial_result.attacked_text,
         )
-        if self._search_over:
-            break
 
         child = self._perturb(child, initial_result)
         children.append(child)
 
         # We need two `search_over` checks b/c value might change both in
         # `crossover` method and `perturb` method.
-        if self._search_over:
-            break
 
         population = [population[0]] + children
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
