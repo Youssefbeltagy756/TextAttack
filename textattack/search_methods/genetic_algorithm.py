@@ -285,7 +285,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     def perform_search2(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
+        population = initial_result
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -375,7 +375,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 break
     
             perturbed_text_score = best_perturbed_text_score + 0.01 * best_perturbation
-            print(perturbed_text)
             #result = self._goal_function.predict(perturbed_text)
             
             if perturbed_text_score == GoalFunctionResultStatus.SUCCEEDED:
