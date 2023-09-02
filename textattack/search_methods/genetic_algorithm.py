@@ -323,7 +323,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     
             population = best_whole
             
-            pop_scores = torch.Tensor([pm.result.score for pm in population])
+            #pop_scores = torch.Tensor([pm.result.score for pm in population])
+            pop_scores = torch.Tensor([population.result.score])
             logits = ((-pop_scores) / self.temp).exp()
             select_probs = (logits / logits.sum()).cpu().numpy()
 
