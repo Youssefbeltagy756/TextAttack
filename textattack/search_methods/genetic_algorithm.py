@@ -339,26 +339,43 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         pop_size = len(population)
         current_score = initial_result.score
     
+        for i in range(1):
+            population = sorted(population, key=lambda x: x.result.score, reverse=True)
     
-        best_perturbation = None
-        best_perturbed_text = None
-
-        for pm in population:
-            wholePop = pm
-            popa = pm.result.goal_status
-            perturbed_text = pm.result.attacked_text
-            perturbed_text_score = pm.result.score
-            perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
-
-            if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
-                best_perturbation = perturbation
-                best_perturbed_text = perturbed_text
-                best_perturbed_text_score = perturbed_text_score
-                best_popa = popa
-                best_whole = wholePop
+            if (
+                self._search_over
+                or population[0].result.goal_status
+                == GoalFunctionResultStatus.SUCCEEDED
+            ):
+                break
     
-
+            if population[0].result.score > current_score:
+                current_score = population[0].result.score
+            elif self.give_up_if_no_improvement:
+                break
+    
+            best_perturbation = None
+            best_perturbed_text = None
+    
+            for pm in population:
+                wholePop = pm
+                popa = pm.result.goal_status
+                perturbed_text = pm.result.attacked_text
+                perturbed_text_score = pm.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
+                    best_popa = popa
+                    best_whole = wholePop
+    
+            if self._search_over:
+                break
+    
             perturbed_text_score = best_perturbed_text_score + 0.01 * best_perturbation
+            print(perturbed_text)
             #result = self._goal_function.predict(perturbed_text)
             
             if perturbed_text_score == GoalFunctionResultStatus.SUCCEEDED:
