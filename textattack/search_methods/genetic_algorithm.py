@@ -306,7 +306,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             best_perturbation = None
             best_perturbed_text = None
-            
+            i = 0
             for pm in population:
                 wholePop = pm
                 popa = pm.result.goal_status
@@ -314,13 +314,14 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 perturbed_text_score = pm.result.score
                 perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
     
-                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation) and i <(pop_size-1):
                     best_perturbation = perturbation
                     best_perturbed_text = perturbed_text
                     best_perturbed_text_score = perturbed_text_score
                     best_popa = popa
                     best_whole = wholePop
-                    
+                i = i + 1
+                              
             population = best_whole
             
             #pop_scores = torch.Tensor([pm.result.score for pm in population])
