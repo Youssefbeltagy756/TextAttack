@@ -313,6 +313,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             children = []
             i = 0
+            best_perturbation = None
+            best_perturbed_text = None
             for pm in population:
                 wholePop = pm
                 popa = pm.result.goal_status
