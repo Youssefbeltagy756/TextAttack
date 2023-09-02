@@ -312,9 +312,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             parent2_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
 
             children = []
-            i = 0
             best_perturbation = None
             best_perturbed_text = None
+            i = 0
             for pm in population:
                 wholePop = pm
                 popa = pm.result.goal_status
@@ -322,34 +322,33 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 perturbed_text_score = pm.result.score
                 perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
     
-                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation) and i != pop_size-1:
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation) and i<(pop_size-1):
                     best_perturbation = perturbation
                     best_perturbed_text = perturbed_text
                     best_perturbed_text_score = perturbed_text_score
                     best_popa = popa
                     best_whole = wholePop
-                    idx = i
+                    best_idx = i
                 i=i+1
+                    
+        child = self._crossover(
+            population[parent1_idx[best_idx]],
+            population[parent2_idx[best_idx]],
+            initial_result.attacked_text,
+        )
+        if self._search_over:
+            break
 
+        child = self._perturb(child, initial_result)
+        children.append(child)
 
-            child = self._crossover(
-                population[parent1_idx[idx]],
-                population[parent2_idx[idx]],
-                initial_result.attacked_text,
-            )
-            if self._search_over:
-                break
+        # We need two `search_over` checks b/c value might change both in
+        # `crossover` method and `perturb` method.
+        if self._search_over:
+            break
 
-            child = self._perturb(child, initial_result)
-            children.append(child)
-
-            # We need two `search_over` checks b/c value might change both in
-            # `crossover` method and `perturb` method.
-            if self._search_over:
-                break
-
-            population = [population[0]] + children
-
+        population = [population[0]] + children
+        population = sorted(population, key=lambda x: x.result.score, reverse=True)
         return population[0].result
 
     def perform_search0(self, initial_result, array_modifiable_indeces):
