@@ -283,9 +283,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    def perform_search2(self, initial_result, array_modifiable_indeces):
+    def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = initial_result
+        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -333,13 +333,13 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
         return population[0].result
 
-    def perform_search(self, initial_result, array_modifiable_indeces):
+    def perform_search0(self, initial_result, array_modifiable_indeces):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-        pop_size = 1
+        pop_size = len(population)
         current_score = initial_result.score
     
-        for i in range(1):
+        for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
     
             if (
@@ -375,6 +375,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 break
     
             perturbed_text_score = best_perturbed_text_score + 0.01 * best_perturbation
+            print(perturbed_text)
             #result = self._goal_function.predict(perturbed_text)
             
             if perturbed_text_score == GoalFunctionResultStatus.SUCCEEDED:
