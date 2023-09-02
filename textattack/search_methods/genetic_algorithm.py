@@ -327,6 +327,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                     best_popa = popa
                     best_whole = wholePop
                     idx = i
+                i=i+1
 
 
             child = self._crossover(
