@@ -336,7 +336,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-        pop_size = len(population)
+        pop_size = 1
         current_score = initial_result.score
     
         for i in range(1):
