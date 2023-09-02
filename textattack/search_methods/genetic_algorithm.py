@@ -304,14 +304,31 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             elif self.give_up_if_no_improvement:
                 break
 
+            best_perturbation = None
+            best_perturbed_text = None
+            
+            for pm in population:
+                wholePop = pm
+                popa = pm.result.goal_status
+                perturbed_text = pm.result.attacked_text
+                perturbed_text_score = pm.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
+                    best_popa = popa
+                    best_whole = wholePop
+                    
+            population = best_whole
+            
             pop_scores = torch.Tensor([pm.result.score for pm in population])
             logits = ((-pop_scores) / self.temp).exp()
             select_probs = (logits / logits.sum()).cpu().numpy()
 
             parent1_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
             parent2_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
-            print(parent1_idx)
-            print(parent2_idx)
 
             children = []
             for idx in range(pop_size - 1):
