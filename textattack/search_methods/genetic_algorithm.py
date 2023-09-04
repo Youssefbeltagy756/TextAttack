@@ -312,6 +312,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             parent2_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
 
             children = []
+            best_perturbation = None
+            best_perturbed_text = None
             for idx in range(pop_size - 1):
                 child = self._crossover(
                     population[parent1_idx[idx]],
@@ -320,8 +322,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 )
                 if self._search_over:
                     break
-                best_perturbation = None
-                best_perturbed_text = None
                 wholePop = child
                 popa = child.result.goal_status
                 perturbed_text = child.result.attacked_text
@@ -341,7 +341,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 if self._search_over:
                     break
             child = self._perturb(child, initial_result)
-            population = [population[0]] + child
+            children.append(child)
+            population = [population[0]] + children
 
         return population[0].result
 
