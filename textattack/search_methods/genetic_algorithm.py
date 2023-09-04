@@ -287,11 +287,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         population = sorted(population, key=lambda x: self._calculate_norm(self._compute_perturbation(x.result.score, initial_result.attacked_text)))
+        print(len(population))
         while len(population) > len(population) // 2:
             population.pop()
         pop_size = len(population)
         current_score = initial_result.score
-
+        print(len(population))
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
 
