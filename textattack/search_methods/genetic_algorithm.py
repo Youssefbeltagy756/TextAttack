@@ -283,9 +283,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    def perform_search2(self, initial_result, array_modifiable_indeces):
+    def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = self._initialize_population(initial_result, 2, array_modifiable_indeces)
+        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -312,6 +312,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             parent2_idx = np.random.choice(pop_size, size=pop_size - 1, p=select_probs)
 
             children = []
+            best_perturbation = None
+            best_perturbed_text = None
             for idx in range(pop_size - 1):
                 child = self._crossover(
                     population[parent1_idx[idx]],
@@ -320,20 +322,33 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 )
                 if self._search_over:
                     break
+                wholePop = child
+                popa = child.result.goal_status
+                perturbed_text = child.result.attacked_text
+                perturbed_text_score = child.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
+                    best_popa = popa
+                    best_whole = wholePop
+               
 
-                child = self._perturb(child, initial_result)
                 children.append(child)
-
                 # We need two `search_over` checks b/c value might change both in
                 # `crossover` method and `perturb` method.
                 if self._search_over:
                     break
-
+            best_whole = self._perturb(best_whole, initial_result)
+            children.pop()
+            children.append(best_whole)
             population = [population[0]] + children
 
         return population[0].result
 
-    def perform_search(self, initial_result, array_modifiable_indeces):
+    def perform_search0(self, initial_result, array_modifiable_indeces):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         pop_size = len(population)
@@ -383,7 +398,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             population.append(best_whole)
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return self.perform_search2(population[0].result, array_modifiable_indeces)
+        return self.perform_search(population[0].result, array_modifiable_indeces)
     
 
     def check_transformation_compatibility(self, transformation):
