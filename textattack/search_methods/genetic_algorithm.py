@@ -378,6 +378,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             #result = self._goal_function.predict(perturbed_text)
             
             if perturbed_text_score == GoalFunctionResultStatus.SUCCEEDED:
+                print("Goal_function_sucess")
                 self._search_over = True
     
             population.append(best_whole)
