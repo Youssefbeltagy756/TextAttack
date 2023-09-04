@@ -283,9 +283,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    def perform_search2(self, initial_result, array_modifiable_indeces):
+    def perform_search2(self, initial_result, array_modifiable_indeces, population_size):
         self._search_over = False
-        population = self._initialize_population(initial_result, 2, array_modifiable_indeces)
+        population = self._initialize_population(initial_result, population_size//2, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -384,7 +384,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             population.append(best_whole)
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return self.perform_search2(population[0].result, array_modifiable_indeces)
+        return self.perform_search2(population[0].result, array_modifiable_indeces, self.pop_size)
     
 
     def check_transformation_compatibility(self, transformation):
