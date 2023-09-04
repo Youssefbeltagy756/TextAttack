@@ -283,16 +283,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    def perform_search(self, initial_result, array_modifiable_indeces):
+    def perform_search2(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-        population = sorted(population, key=lambda x: self._calculate_norm(self._compute_perturbation(x.result.score, initial_result.attacked_text)))
-        print(len(population))
-        while len(population) > len(population) // 2:
-            population.pop()
+        population = self._initialize_population(initial_result, self.pop_size//2, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
-        print(len(population))
+
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
 
@@ -337,7 +333,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
         return population[0].result
 
-    def perform_search0(self, initial_result, array_modifiable_indeces):
+    def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         pop_size = len(population)
@@ -358,8 +354,22 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             elif self.give_up_if_no_improvement:
                 break
     
-
-            population = sorted(population, key=lambda x: self._calculate_norm(self._compute_perturbation(x.result.score, initial_result.attacked_text)))
+            best_perturbation = None
+            best_perturbed_text = None
+    
+            for pm in population:
+                wholePop = pm
+                popa = pm.result.goal_status
+                perturbed_text = pm.result.attacked_text
+                perturbed_text_score = pm.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
+                    best_popa = popa
+                    best_whole = wholePop
     
             if self._search_over:
                 break
@@ -374,7 +384,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             population.append(best_whole)
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return self.perform_search2(population[0].result, array_modifiable_indeces, self.pop_size)
+        return self.perform_search2(population[0].result, array_modifiable_indeces)
     
 
     def check_transformation_compatibility(self, transformation):
