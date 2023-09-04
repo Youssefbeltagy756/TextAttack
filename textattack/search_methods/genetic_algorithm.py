@@ -340,8 +340,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 # `crossover` method and `perturb` method.
                 if self._search_over:
                     break
-            child = self._perturb(child, initial_result)
-            children.append(child)
+            best_whole = self._perturb(best_whole, initial_result)
+            children.append(best_whole)
             population = [population[0]] + children
 
         return population[0].result
