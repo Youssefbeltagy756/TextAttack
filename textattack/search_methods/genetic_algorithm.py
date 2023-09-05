@@ -273,9 +273,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         """
         raise NotImplementedError()
 
-    ########################################################################################################
-    #####################                      ADDED METHODS                      ##########################
-    ########################################################################################################
+    import numpy as np
     
     def _compute_perturbation(self, perturbed_text_score, input_text):
         gradient = perturbed_text_score
@@ -285,55 +283,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     def _calculate_norm(self, vector):
         return np.linalg.norm(vector)
 
-    #def get_lowest_norm_member(self, initial_result, array_modifiable_indeces):
-    #    self._search_over = False
-    #    population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-    #    best_perturbation = None
-    
-    #    for pm in population:
-    #        perturbed_text_score = pm.result.score
-    #        perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
-
-    #        if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
-    #            best_member = pm
-    
-    #       population.append(best_member)
-    
-    #    population = sorted(population, key=lambda x: x.result.score, reverse=True)
-    #    return population[0].result
-
-    def get_lowest_norm_member(self, initial_result, array_modifiable_indeces):
+    def perform_search2(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-        best_perturbation = None
-        best_members = []  
-    
-        for pm in population:
-            perturbed_text_score = pm.result.score
-            perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
-    
-            if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
-                best_perturbation = perturbation
-                best_member = pm
-                best_members.append(best_member)
-    
-        population.extend(best_members)  
-    
-        population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return population[0].result
-
-    ########################################################################################################
-    ########################################################################################################
-    ########################################################################################################
-
-    
-    def perform_search(self, initial_result, array_modifiable_indeces):
-        result = self.get_lowest_norm_member(initial_result, array_modifiable_indeces)
-        self._search_over = False
-        population = self._initialize_population(result, self.pop_size//2, array_modifiable_indeces)
-        # if you want to apply ceiling instead of floor
-        #import math
-        #population = self._initialize_population(result, math.ceil(self.pop_size/2), array_modifiable_indeces)
+        population = self._initialize_population(initial_result, 2, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -381,6 +333,58 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
         return population[0].result
 
+    def perform_search(self, initial_result, array_modifiable_indeces):
+        self._search_over = False
+        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
+        pop_size = len(population)
+        current_score = initial_result.score
+    
+        for i in range(1):
+            population = sorted(population, key=lambda x: x.result.score, reverse=True)
+    
+            if (
+                self._search_over
+                or population[0].result.goal_status
+                == GoalFunctionResultStatus.SUCCEEDED
+            ):
+                break
+    
+            if population[0].result.score > current_score:
+                current_score = population[0].result.score
+            elif self.give_up_if_no_improvement:
+                break
+    
+            best_perturbation = None
+            best_perturbed_text = None
+    
+            for pm in population:
+                wholePop = pm
+                popa = pm.result.goal_status
+                perturbed_text = pm.result.attacked_text
+                perturbed_text_score = pm.result.score
+                perturbation = self._compute_perturbation(perturbed_text_score, initial_result.attacked_text)
+    
+                if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
+                    best_perturbation = perturbation
+                    best_perturbed_text = perturbed_text
+                    best_perturbed_text_score = perturbed_text_score
+                    best_popa = popa
+                    best_whole = wholePop
+    
+            if self._search_over:
+                break
+    
+            perturbed_text_score = best_perturbed_text_score + 0.01 * best_perturbation
+            #result = self._goal_function.predict(perturbed_text)
+            
+            if perturbed_text_score == GoalFunctionResultStatus.SUCCEEDED:
+                print("Goal_function_sucess")
+                self._search_over = True
+    
+            population.append(best_whole)
+    
+        population = sorted(population, key=lambda x: x.result.score, reverse=True)
+        return self.perform_search2(population[0].result, array_modifiable_indeces)
     
 
     def check_transformation_compatibility(self, transformation):
