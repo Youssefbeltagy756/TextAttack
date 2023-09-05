@@ -274,9 +274,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         raise NotImplementedError()
 
 
-    def perform_search2(self, initial_result, array_modifiable_indeces):
+    def perform_search(self, initial_result, array_modifiable_indeces):
         self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size//2, array_modifiable_indeces)
+        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
+        population = sorted(population, key=lambda x: x.result.score, reverse=True)
+        result = population[0].result
+        population = self._initialize_population(result, self.pop_size//2, array_modifiable_indeces)
         pop_size = len(population)
         current_score = initial_result.score
 
@@ -322,14 +325,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             population = [population[0]] + children
 
-        return population[0].result
-
-    def perform_search(self, initial_result, array_modifiable_indeces):
-        self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
-        population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return self.perform_search2(population[0].result, array_modifiable_indeces)
-    
+        return population[0].result    
 
     def check_transformation_compatibility(self, transformation):
         """The genetic algorithm is specifically designed for word
