@@ -318,9 +318,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     
         population.append(best_member)  
-    
+        if best_member.result == population[0].result:
+            print("perturbation mattered")
+        else:
+            print("perturbation didn't matter")
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return best_member
+        return population[0].result
 
     ########################################################################################################
     ########################################################################################################
