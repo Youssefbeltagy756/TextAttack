@@ -306,7 +306,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size, array_modifiable_indeces)
         best_perturbation = None
-        best_members = []  # Create a separate list to store the best members
+        best_members = []  
     
         for pm in population:
             perturbed_text_score = pm.result.score
@@ -315,10 +315,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             if best_perturbation is None or self._calculate_norm(perturbation) < self._calculate_norm(best_perturbation):
                 best_perturbation = perturbation
                 best_member = pm
+                best_members.append(best_member)
     
-            best_members.append(best_member)
-    
-        population.extend(best_members)  # Append the best members to the population list
+        population.extend(best_members)  
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
         return population[0].result
