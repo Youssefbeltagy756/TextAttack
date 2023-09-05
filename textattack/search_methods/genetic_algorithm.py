@@ -320,7 +320,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         population.append(best_member)  
     
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        return population[0].result
+        return best_member
 
     ########################################################################################################
     ########################################################################################################
