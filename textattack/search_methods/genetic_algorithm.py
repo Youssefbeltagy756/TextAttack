@@ -308,7 +308,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     
     def perform_search(self, initial_result, array_modifiable_indeces):
-        result = self.get_lowest_norm_member(self, initial_result, array_modifiable_indeces)
+        result = self.get_lowest_norm_member(initial_result, array_modifiable_indeces)
         self._search_over = False
         population = self._initialize_population(result, self.pop_size//2, array_modifiable_indeces)
         # if you want to apply ceiling instead of floor
