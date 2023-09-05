@@ -319,13 +319,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     
         population.append(best_member)  
         population = sorted(population, key=lambda x: x.result.score, reverse=True)
-        print(best_member.attacked_text)
-        print(population[0].attacked_text)
-        if best_member.attacked_text == population[0].attacked_text:
-            print("same")
-        else:
-            print("not same")
-        return population[0].result
+        return best_member.result
 
     ########################################################################################################
     ########################################################################################################
